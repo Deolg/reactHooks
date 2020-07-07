@@ -1,25 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import TodoContext from "./Context";
+import TodoList from "./ToDo/TodoList";
+import TodoAdd from "./ToDo/TodoAdd";
 
 function App() {
+  const [todos, setTodos] = React.useState([
+    { id: 1, completed: true, title: "1" },
+    { id: 2, completed: false, title: "2" },
+    { id: 3, completed: false, title: "3" },
+  ]);
+
+  function toggleTodo(id) {
+    setTodos(
+      todos.map((todo) => {
+        if (todo.id === id) {
+          todo.completed = !todo.completed;
+        }
+        return todo;
+      })
+    );
+  }
+
+  function removeTodo(id) {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  }
+
+  function addTodo(value) {
+    let curentId = todos[todos.length - 1].id + 1;
+    console.log(value);
+
+    setTodos(
+      todos.concat([
+        {
+          id: curentId,
+          completed: false,
+          title: value,
+        },
+      ])
+    );
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <TodoContext.Provider value={{ removeTodo, toggleTodo, addTodo }}>
+      <div className="wrapper">
+        <h1>React</h1>
+        {todos.length ? <TodoList todos={todos} /> : <p>No todos</p>}
+        <TodoAdd />
+      </div>
+    </TodoContext.Provider>
   );
 }
 
